@@ -6,13 +6,58 @@
     <title>Musashi Lubricants</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="shortcut icon" href="./static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./static/output.css">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/output.css">
 </head>
 <body>
-    <h1 class="font-sans text-5xl text-blue-400">Hello</h1>
+    <header class=" w-full mamx-w-dvh shadow-md">
+        <h1 class="hidden">Musashi Lubricants</h1>
+        <div class="h-20 py-3 flex justify-between items-center w-full mx-auto max-w-screen-content px-4">
+            <img src="/static/images/logo-musashi.svg" width="236" height="56" class="object-contain object-center" />
+            <nav>
+                <ul class="inline-flex items-center justify-end gap-x-8 text-gray-700">
+                    <li>
+                        <a href="#" class="hover:underline">Home</a>
+                    </li>
+                    <li>
+                        <a href="#products" class="hover:underline">Our products</a>
+                    </li>
+                    <li>
+                        <a href="#contact" class="hover:underline">Contact</a>
+                    </li>
+                    <li>
+                        <a href="#about" class="hover:underline">About</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="w-full max-w-dvh">
+        <!-- START HERO -->
+        <div 
+            class="h-[652px] relative w-full max-w-dvh" 
+            style="
+                background: url('/static/images/bg-hero-img-min.jpg'), linear-gradient(rgba(0,0,0,0) 0%, rgba(0,0,0,.25) 68%, rgb(0,0,0) 100%);
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            "
+        >
+            <h2 class="relative top-20 mx-auto max-w-[772px] leading-tight font-bold text-center text-5xl text-white" style="text-shadow: 0 10px 15px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05);">
+                High Quality Engine Lubricants from Japan
+            </h2>
+            <img 
+                src="static/images/musashi-combined-products-with-shadow-min.png" 
+                width="600" 
+                height="316" 
+                class="relative top-32 mx-auto object-contain object-center" />
+        </div>
+        <!-- END HERO -->
+        <div class="h-[576px] w-full max-w-dvh bg-black">
+        </div>
+    </main>
     <!-- <h1 x-data="{ message: 'I ❤️ Alpine' }" x-text="message"></h1> -->
-    <!-- <script defer src="./alpine.js"></script> -->
-    <!-- <script src="./tailwindcss.js"></script> -->
+    <!-- <script defer src="alpine.js"></script> -->
+    <!-- <script src="tailwindcss.js"></script> -->
 </body>
 </html>

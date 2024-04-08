@@ -2,11 +2,16 @@
 module.exports = {
   content: ["*.html"],
   theme: {
+    extend: {
+      colors: {
+        'brand': '#C2211A'
+      },
+    },
     fontFamily: {
       'sans': ['Montserrat', 'ui-sans-serif', 'system-ui'],
     },
-    colors: {
-      transparent: 'red'
+    screens: {
+      'content': '1192px'
     }
   },
   plugins: [],
