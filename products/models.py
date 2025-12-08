@@ -50,6 +50,8 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(
         max_length=255, verbose_name="Product Name")
+    price = models.DecimalField(
+        max_digits=5, decimal_places=2, blank=True, null=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True,
                             help_text="IMPORTANT for product URL, QR code.")
     categories = models.ManyToManyField(

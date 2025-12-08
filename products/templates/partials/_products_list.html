@@ -1,0 +1,10 @@
+<ul>
+  {% for product in page_obj %}
+  <li>
+    <a href="{% url 'products' product.slug %}" class="">
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.price }}</p>
+    </a>
+  </li>
+  {% endfor %}
+</ul>

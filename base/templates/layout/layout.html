@@ -7,7 +7,7 @@
     <title>Musashi Lubricants</title>
     <meta
       name="description"
-      content=".High Quality Engine Lubricants from Japan. Our product range include engine oils, coolants, and ATF transmission fluids."
+      content="High Quality Engine Lubricants from Japan. Our product range include engine oils, coolants, and ATF transmission fluids."
     />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
@@ -150,5 +150,16 @@
         });
       });
     </script>
+      <script defer src="{% static 'js/alpinejs/3.14.9/plugins/intersect.min.js' %}"></script>
+      <script defer src="{% static 'js/alpinejs/3.14.9/alpinejs.min.js' %}"></script>
+      <script defer src="{% static 'js/htmx/2.0.6/htmx.min.js' %}"></script>
+      <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+    <!-- Custom CSS for HTMX swapping Fade Animation -->
+    <style>
+      .htmx-swapping {
+          opacity: 0;
+          transition: opacity 200ms ease-out;
+      }
+    </style>
   </body>
 </html>

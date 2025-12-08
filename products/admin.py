@@ -39,7 +39,7 @@ class ProductAdmin(ModelAdmin):
     inlines = [ProductImageInline,
                ProductDetailsItemInline, ProductInstructionInline]
     filter_horizontal = ('volumes', 'categories', 'suitable_vehicles')
-    list_display = ['name', 'slug', 'id']
+    list_display = ['name', 'slug', 'price', 'id']
     readonly_fields = ['date_modified', 'date_created']
     ordering = ['-date_modified', 'name', 'id']
     form = ProductAdminForm
