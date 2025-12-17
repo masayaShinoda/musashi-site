@@ -1,10 +1,37 @@
-<ul>
-  {% for product in page_obj %}
-  <li>
-    <a href="{% url 'products' product.slug %}" class="">
+{% for product in products %}
+<li>
+  <a href="{% url 'product' product.slug %}"  class="flex flex-col border border-gray-200 rounded-sm">
+    <div class="w-full">
+    </div>
+    <div class="p-4">
+      <span>
+        {{ product.slug }}
+      </span>
       <h3>{{ product.name }}</h3>
       <p>{{ product.price }}</p>
-    </a>
-  </li>
-  {% endfor %}
-</ul>
+    </div>
+  </a>
+</li>
+{% endfor %}
+
+
+{# Only render this OOB swap block if it IS an HTMX request #}
+{% if is_htmx_request %}
+<div id="load-more-container" hx-swap-oob="true" class="w-full">
+  {% if page_obj.has_next %}
+  <nav class="w-full flex justify-center items-center py-6">
+    <button 
+      hx-get="?page={{ page_obj.next_page_number }}" 
+      hx-target="#products_list"
+      hx-swap="beforeend"
+      hx-indicator="#loading-spinner-{{ page_obj.next_page_number }}"
+      class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand"
+    >
+      See More
+    </button>
+    <div id="loading-spinner-{{ page_obj.next_page_number }}" class="htmx-indicator">{% include 'layout/_spinner_speedometer.html' %}</div>
+  </nav>
+  {% else %}
+  {% endif %}
+</div>
+{% endif %}
