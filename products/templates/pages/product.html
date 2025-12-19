@@ -2,6 +2,168 @@
 {% load static %} 
 {% block content %}
 
-<h1>This is a product page</h1>
+<main 
+  x-data="productGallery()"
+  class="w-full max-w-full md:max-w-7xl mx-auto min-h-[80dvh] px-4 pt-16 pb-12 grid grid-cols-2 gap-10"
+>
+  <!-- START product gallery section -->
+  <section class="">
+    <div  
+      class="flex flex-col gap-4 w-full max-w-2xl"
+    >
+      <div class="relative w-full aspect-square bg-gray-100 border border-gray-200 rounded-sm overflow-hidden group">
+        
+        <img 
+          :src="activeImage.url" 
+          :alt="activeImage.alt" 
+          class="w-full h-full object-cover object-center transition-transform duration-500"
+          :class="{ 'scale-105': zoom }"
+          @mouseenter="zoom = true" 
+          @mouseleave="zoom = false"
+        >
+
+        <template x-if="!activeImage.url">
+          <div class="w-full h-full flex items-center justify-center text-gray-400">
+            <span>No image available</span>
+          </div>
+        </template>
+        
+        <template x-if="activeImage.volume_name">
+          <span 
+            class="absolute top-2 left-2 bg-black/70 text-white text-xs font-bold px-2 py-1 rounded-sm" 
+            x-text="activeImage.volume_name">
+          </span>
+        </template>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <p class="text-sm text-gray-500 font-medium">
+          Images for: <span x-text="currentVolumeFilter || 'All Volumes'"></span>
+        </p>
+        
+        <div class="flex flex-wrap gap-2">
+          <template x-for="img in filteredImages" :key="img.id">
+            <button 
+              @click="setActive(img)"
+              class="cursor-pointer w-20 h-20 border-2 rounded-sm overflow-hidden transition-all duration-200"
+              :class="activeImage.id === img.id ? 'border-brand ring-1 ring-brand' : 'border-transparent opacity-70 hover:opacity-100'"
+            >
+              <img 
+                :src="img.url" 
+                :alt="img.alt" 
+                class="w-full h-full object-cover"
+              >
+            </button>
+          </template>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+  <!-- END product gallery section -->
+
+  <!-- START product details section -->
+  <section class="pl-6">
+    <header class="w-full flex flex-col gap-4 justify-start items-start">
+      <h1 class="text-2xl sm:text-3xl xl:text-4xl font-semibold">{{ product.name }}</h1>
+      {% if product.categories %}
+        <div>
+          {% for category in product.categories.all %}
+          <p class="font-semibold text-gray-600">
+            {{ category.name }}
+          </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </header>
+    <div class="py-4">
+      {% if product.description %}
+        <div class="text-sm sm:text-base text-gray-600">{{ product.description|safe }}</div>
+      {% endif %}
+      {% if product.price %}
+      {% endif %}
+    </div>
+    <div class="mt-4 border-t pt-4 border-t-gray-300">
+      <label class="text-sm font-semibold text-gray-900">Select Volume:</label>
+      <div class="flex gap-2 mt-2">
+        <button 
+          @click="filterByVolume(null)" 
+          class="px-3 py-1 text-sm border rounded-sm"
+          :class="currentVolumeFilter === null ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'"
+        >
+          All
+        </button>
+        {% for volume in product.volumes.all %}
+        <button 
+          @click="filterByVolume('{{ volume.name }}', {{ volume.id }})" 
+          class="px-3 py-1 text-sm border rounded-sm transition"
+          :class="currentVolumeFilter === '{{ volume.name }}' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800 hover:bg-gray-50'"
+        >
+          {{ volume.name }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  <!-- END product details section -->
+
+
+  <script>
+    function productGallery() {
+      return {
+        // Initial data injected from Django
+        allImages: [
+          {% for image in product.images.all %}
+          {
+            id: {{ image.id }},
+            url: "{{ image.image.url }}",
+            alt: "{{ image.alt|default:product.name|escapejs }}",
+            volume_id: {% if image.for_volume %}{{ image.for_volume.id }}{% else %}null{% endif %},
+            volume_name: "{% if image.for_volume %}{{ image.for_volume.name }}{% else %}{% endif %}"
+          },
+          {% endfor %}
+        ],
+        
+        activeImage: { url: '', alt: '' },
+        currentVolumeFilter: null, // null means 'Show All'
+        currentVolumeId: null,
+        zoom: false,
+
+        init() {
+          if (this.allImages.length > 0) {
+            this.activeImage = this.allImages[0];
+          }
+        },
+
+        get filteredImages() {
+          if (!this.currentVolumeId) {
+            return this.allImages;
+          }
+          return this.allImages.filter(img => 
+            img.volume_id === null || img.volume_id === this.currentVolumeId
+          );
+        },
+
+        setActive(img) {
+          this.activeImage = img;
+        },
+
+        filterByVolume(name, id = null) {
+          this.currentVolumeFilter = name;
+          this.currentVolumeId = id;
+
+          // Auto-switch main image if specific volume selected
+          if (id) {
+            const firstVolImage = this.allImages.find(img => img.volume_id === id);
+            if (firstVolImage) {
+              this.activeImage = firstVolImage;
+            }
+          }
+        }
+      }
+    }
+  </script>
+</main>
 
 {% endblock %}
