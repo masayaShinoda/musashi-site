@@ -107,8 +107,10 @@ class ProductImage(models.Model):
     image = models.ImageField(
         upload_to='uploads/products/', null=True, blank=True)
     alt = models.CharField(max_length=255, null=True, blank=True)
-    for_product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    for_volume = models.ForeignKey(ProductVolume, on_delete=models.CASCADE)
+    for_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='images')
+    for_volume = models.ForeignKey(
+        ProductVolume, on_delete=models.CASCADE, related_name='volumes')
 
     class Meta:
         verbose_name = 'Product Image'
