@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, ProductInstruction, ProductDetailsItem, ProductVolume, Vehicle, Product, ProductImage
+from .models import Category, ProductInstruction, ProductDetailsItem, ProductVolume, Vehicle, Product, ProductImage, ProductVariant
 from unfold.admin import ModelAdmin, TabularInline
 from .forms import ProductAdminForm, ProductInstructionAdminForm
 
@@ -34,19 +34,33 @@ class ProductInstructionInline(TabularInline):
     form = ProductInstructionAdminForm
 
 
+class ProductVariantInline(TabularInline):
+    model = ProductVariant
+    extra = 1
+    tab = True
+    verbose_name = "Price & Volume"
+    verbose_names = "Prices & Volumes"
+
+
 @admin.register(Product)
 class ProductAdmin(ModelAdmin):
-    inlines = [ProductImageInline,
+    inlines = [ProductVariantInline, ProductImageInline,
                ProductDetailsItemInline, ProductInstructionInline]
-    filter_horizontal = ('volumes', 'categories', 'suitable_vehicles')
-    list_display = ['name', 'slug', 'price', 'id']
+    filter_horizontal = ('categories', 'suitable_vehicles')
+    list_display = ['name', 'get_price_display', 'slug', 'id']
+    # Optional: Give the column a nice name in the admin header
+
+    def get_price_display(self, obj):
+        return obj.get_price_display()
+    get_price_display.short_description = "Price"
+
     readonly_fields = ['date_modified', 'date_created']
     ordering = ['-date_modified', 'name', 'id']
     form = ProductAdminForm
 
 
 @admin.register(ProductVolume)
-class ProductVolume(ModelAdmin):
+class ProductVolumeAdmin(ModelAdmin):
     list_display = ['name', 'id']
     ordering = ['name', 'id']
 

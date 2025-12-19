@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Min, Max
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from base.utils import compress_image
@@ -50,14 +51,13 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(
         max_length=255, verbose_name="Product Name")
-    price = models.DecimalField(
-        max_digits=5, decimal_places=2, blank=True, null=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True,
                             help_text="IMPORTANT for product URL, QR code.")
     categories = models.ManyToManyField(
         Category, related_name='products', blank=True)
     volumes = models.ManyToManyField(
         ProductVolume,
+        through='ProductVariant',  # intermediary model
         related_name='product_volumes',
         blank=True,
     )
@@ -76,6 +76,25 @@ class Product(models.Model):
     class Meta:
         ordering = ['name', 'id']
 
+    def get_price_display(self):
+        """
+        Returns a string representing the price or price range.
+        Examples: "$10.00", "$10.00 - $50.00", or "Price N/A"
+        """
+        # Aggregate finds the min and max price across all related variants
+        prices = self.variants.aggregate(
+            min_price=Min('price'),
+            max_price=Max('price')
+        )
+
+        if prices['min_price'] is None:
+            return "Price N/A"
+
+        if prices['min_price'] == prices['max_price']:
+            return f"${prices['min_price']}"
+
+        return f"${prices['min_price']} - ${prices['max_price']}"
+
     def __str__(self):
         return self.name
 
@@ -90,10 +109,27 @@ class Product(models.Model):
         super().save(*args, **kwargs)
 
 
+class ProductVariant(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='variants')
+    volume = models.ForeignKey(ProductVolume, on_delete=models.CASCADE)
+    price = models.DecimalField(
+        max_digits=5, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Product Variant (volume & price)'
+        verbose_name_plural = 'Product Variants (volume & price)'
+        # one product cannot have two prices for the same volume
+        unique_together = ('product', 'volume')
+
+    def __str__(self):
+        return f"{self.product.name} - {self.volume.name} (${self.price})"
+
+
 class ProductDetailsItem(models.Model):
     name = models.CharField(max_length=255, default='')
     value = models.CharField(max_length=255, default='')
-    for_product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    for_product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='detail_items')
 
     class Meta:
         verbose_name = 'Product Details'

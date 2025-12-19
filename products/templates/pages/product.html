@@ -4,7 +4,7 @@
 
 <main 
   x-data="productGallery()"
-  class="w-full max-w-full md:max-w-7xl mx-auto min-h-[80dvh] px-4 pt-16 pb-12 grid grid-cols-2 gap-10"
+  class="w-full max-w-full md:max-w-7xl mx-auto min-h-[80dvh] px-4 pt-16 pb-12 grid grid-cols-2 gap-10 mb-16"
 >
   <!-- START product gallery section -->
   <section class="">
@@ -20,6 +20,7 @@
           :class="{ 'scale-105': zoom }"
           @mouseenter="zoom = true" 
           @mouseleave="zoom = false"
+          loading="lazy"
         >
 
         <template x-if="!activeImage.url">
@@ -57,32 +58,29 @@
           </template>
         </div>
       </div>
-
     </div>
-
   </section>
   <!-- END product gallery section -->
 
   <!-- START product details section -->
-  <section class="pl-6">
+  <section class="sm:pl-10 lg:pl-20">
     <header class="w-full flex flex-col gap-4 justify-start items-start">
       <h1 class="text-2xl sm:text-3xl xl:text-4xl font-semibold">{{ product.name }}</h1>
       {% if product.categories %}
         <div>
           {% for category in product.categories.all %}
           <p class="font-semibold text-gray-600">
-            {{ category.name }}
+            {{ category.name }}&nbsp;
           </p>
           {% endfor %}
         </div>
       {% endif %}
     </header>
-    <div class="py-4">
+    <div class="py-4 flex flex-col gap-y-8">
       {% if product.description %}
         <div class="text-sm sm:text-base text-gray-600">{{ product.description|safe }}</div>
       {% endif %}
-      {% if product.price %}
-      {% endif %}
+      <p class="text-2xl font-semibold text-brand" x-text="currentPriceDisplay"></p>
     </div>
     <div class="mt-4 border-t pt-4 border-t-gray-300">
       <label class="text-sm font-semibold text-gray-900">Select Volume:</label>
@@ -94,17 +92,32 @@
         >
           All
         </button>
-        {% for volume in product.volumes.all %}
+
+        {% for variant in product.variants.all %}
         <button 
-          @click="filterByVolume('{{ volume.name }}', {{ volume.id }})" 
+          @click="filterByVolume('{{ variant.volume.name }}', {{ variant.volume.id }})" 
           class="px-3 py-1 text-sm border rounded-sm transition"
-          :class="currentVolumeFilter === '{{ volume.name }}' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800 hover:bg-gray-50'"
+          :class="currentVolumeFilter === '{{ variant.volume.name }}' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800 hover:bg-gray-50'"
         >
-          {{ volume.name }}
+          {{ variant.volume.name }}
         </button>
         {% endfor %}
       </div>
     </div>
+    {% if product.detail_items.all %}
+    <div class="py-10 w-full">
+      <h3 class="text-gray-800 font-semibold text-xl mb-2">Details</h3>
+      <table class="w-full">
+      {% for item in product.detail_items.all  %}
+        <tr> 
+          <td class="text-gray-500 py-2">{{ item.name }}</td>
+          <td class="text-gray-700 py-2 text-right">{{ item.value }}</td>
+        </tr>
+      {% endfor %}
+      </table>
+    </div>
+    {% endif %}
+    <!-- TODO data sheet download btn -->
   </section>
   <!-- END product details section -->
 
@@ -128,7 +141,29 @@
         activeImage: { url: '', alt: '' },
         currentVolumeFilter: null, // null means 'Show All'
         currentVolumeId: null,
+        variants: [
+          {% for variant in product.variants.all %}
+          {
+            id: {{ variant.volume.id }},
+            name: "{{ variant.volume.name }}",
+            price: "{{ variant.price }}" 
+          },
+          {% endfor %}
+        ],
         zoom: false,
+
+        priceString: "{{ product.get_price_display }}",
+
+        get currentPriceDisplay() {
+          // If a specific volume is selected, show that specific price
+          if (this.currentVolumeId) {
+            const variant = this.variants.find(v => v.id === this.currentVolumeId);
+            return variant ? `$${variant.price}` : 'Price N/A';
+          }
+          
+          // Otherwise, return the Range string we calculated in Python
+          return this.priceString;
+        },
 
         init() {
           if (this.allImages.length > 0) {
