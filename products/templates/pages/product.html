@@ -214,12 +214,12 @@
     {% if product.description or product.instructions or product.standards_and_approval %}
     <div x-data="{ activeTab: '{% if product.description %}description{% elif product.instructions %}instructions{% else %}standards{% endif %}' }" class="p-2 sm:p-4 border border-gray-200 rounded-lg">
       <!-- Tab Navigation -->
-      <div class="flex space-x-4 border-b border-gray-300 mb-4">
+      <div class="flex space-x-0 sm:space-x-4 border-b border-gray-300 mb-4 overflow-x-scroll max-w-full">
         {% if product.description %}
         <button 
           @click="activeTab = 'description'" 
           :class="activeTab === 'description' ? 'border-b-2 border-brand font-semibold' : 'text-gray-500'"
-          class="cursor-pointer py-2 px-4"
+          class="cursor-pointer text-sm py-1 px-2 sm:text-base sm:py-2 sm:px-4"
         >
           Description
         </button>
@@ -229,7 +229,7 @@
         <button 
           @click="activeTab = 'instructions'" 
           :class="activeTab === 'instructions' ? 'border-b-2 border-brand font-semibold' : 'text-gray-500'"
-          class="cursor-pointer py-2 px-4"
+          class="cursor-pointer text-sm py-1 px-2 sm:text-base sm:py-2 sm:px-4"
         >
           Instruction Manual
         </button>
@@ -239,7 +239,7 @@
         <button 
           @click="activeTab = 'standards'" 
           :class="activeTab === 'standards' ? 'border-b-2 border-brand font-semibold' : 'text-gray-500'"
-          class="cursor-pointer py-2 px-4"
+          class="cursor-pointer text-sm py-1 px-2 sm:text-base sm:py-2 sm:px-4"
         >
           Standards & Approvals
         </button>
