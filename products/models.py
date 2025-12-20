@@ -169,7 +169,7 @@ class ProductInstruction(models.Model):
     pdf_manual = models.FileField(
         upload_to='product_manuals/', blank=True, null=True)
     youtube_embed_url = models.URLField(max_length=200, blank=True, null=True)
-    for_product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    for_product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='instructions')
 
     class Meta:
         verbose_name = 'Product Instruction'
