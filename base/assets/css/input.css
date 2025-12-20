@@ -6,10 +6,10 @@
   --font-sans: Montserrat, sans-serif;
 }
 
-/* @utility scrollbar-hide { */
-/*     -ms-overflow-style: none; */
-/*     scrollbar-width: none; */
-/*     &::-webkit-scrollbar { */
-/*       display: none; */
-/*   } */
-/* } */
+@utility scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+  }
+}

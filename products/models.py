@@ -95,6 +95,9 @@ class Product(models.Model):
 
         return f"${prices['min_price']:.2f} - ${prices['max_price']:.2f}"
 
+    def get_absolute_url(self):
+        return f"/products/{self.slug}"
+
     def __str__(self):
         return self.name
 
@@ -129,7 +132,8 @@ class ProductVariant(models.Model):
 class ProductDetailsItem(models.Model):
     name = models.CharField(max_length=255, default='')
     value = models.CharField(max_length=255, default='')
-    for_product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='detail_items')
+    for_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='detail_items')
 
     class Meta:
         verbose_name = 'Product Details'
@@ -169,7 +173,8 @@ class ProductInstruction(models.Model):
     pdf_manual = models.FileField(
         upload_to='product_manuals/', blank=True, null=True)
     youtube_embed_url = models.URLField(max_length=200, blank=True, null=True)
-    for_product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='instructions')
+    for_product = models.OneToOneField(
+        Product, on_delete=models.CASCADE, related_name='instructions')
 
     class Meta:
         verbose_name = 'Product Instruction'
