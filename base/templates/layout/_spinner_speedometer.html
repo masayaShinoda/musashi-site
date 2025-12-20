@@ -1,0 +1,41 @@
+<div class="relative flex flex-col items-center justify-center w-24 h-24 p-2 text-[#c2211a] scale-75">
+  
+  <style>
+    /* Custom "Revving" Keyframes
+      0-25%: Rapid acceleration (fast)
+      25-60%: Floating at the peak (slow)
+      60-100%: Rapid deceleration/reset (fast)
+    */
+    @keyframes speedometer-rev {
+      0% { transform: rotate(-100deg); animation-timing-function: cubic-bezier(0.5, 0, 1, 0.5); }
+      25% { transform: rotate(90deg); animation-timing-function: ease-in-out; }
+      55% { transform: rotate(75deg); animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1); }
+      100% { transform: rotate(-100deg); }
+    }
+  </style>
+
+  <svg viewBox="0 0 200 120" class="w-full h-full overflow-visible">
+    <path 
+      d="M 20 100 A 80 80 0 0 1 180 100"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="24"
+      stroke-dasharray="35 14"
+      stroke-linecap="butt"
+      class="opacity-25"
+    />
+
+    <g class="origin-[100px_100px]" style="animation: speedometer-rev 1.5s infinite;">
+      <circle cx="100" cy="100" r="10" fill="currentColor" />
+      
+      <path 
+        d="M 100 100 L 94 30 L 100 15 L 106 30 Z" 
+        fill="currentColor"
+      />
+    </g>
+  </svg>
+  
+  <!-- <span class="mt-1 text-xs font-bold tracking-widest opacity-80 animate-pulse font-mono"> -->
+  <!--   LOADING -->
+  <!-- </span> -->
+</div>

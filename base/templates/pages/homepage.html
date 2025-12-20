@@ -1,0 +1,215 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+{% block content %}
+<main class="w-full max-w-dvw">
+    <!-- START HERO -->
+    <section 
+        class="w-full max-w-dvw" 
+        style="
+    background-image:  linear-gradient(rgba(0,0,0,0) 0%, rgba(0,0,0,.25) 68%, rgb(0,0,0) 100%), url('{% static 'images/bg-hero-img-min.jpg' %}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        "
+    >
+        <div class="relative top-[72px] z-10">
+            <h2 class="mb-[68px] mx-auto max-w-[772px] leading-tight font-bold text-center text-4xl md:text-5xl text-white" style="text-shadow: 0 10px 15px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05);">
+                High Quality Engine Lubricants from Japan
+            </h2>
+            <img 
+                src="{% static 'images/musashi-combined-products-with-shadow-min.png' %}" 
+                alt="Musashi products"
+                width="600" 
+                height="316" 
+                class="mx-auto object-contain object-center" 
+            />
+        </div>
+    </section>
+    <!-- END HERO -->
+    <!-- START HOME SECTION 1 -->
+    <section 
+        class="h-[576px] relative w-full max-w-dvw bg-black" 
+        style="
+            background-image: url('{% static 'images/bg-perf-min.jpg' %}');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        "
+    >
+        <div class="pt-[176px] pb-[136px] mx-auto max-w-7xl px-4 flex justify-between items-start">
+            <div class="max-w-[540px]">
+                <h3 class="mb-6 font-semibold text-4xl text-gray-100">
+                    Unlock <span class="text-brand">Peak Performance</span> with Japan's Finest Engine Lubricants
+                </h3>
+                <p class="text-base leading-6 text-gray-300">
+                    Elevate your driving experience with Musashi Lubricants - your trusted partner for premium engine oils, ATF transmission fluid, and coolants. Backed by over 30 years of excellence in engineering and innovation, our products are meticulously crafted to deliver unmatched performance for gasoline and diesel engines.
+                </p>
+            </div>
+        </div>
+    </section>
+    <!-- END HOME SECTION 1 -->
+    <!-- START HOME SECTION 2 -->
+    <section id="products" class="scroll-mt-4 w-full max-w-7xl px-4 py-20 mx-auto">
+        <header class="mb-8 w-full flex items-center">
+            <h2 class="mr-4 text-4xl font-semibold text-gray-800">
+                Our products
+            </h2>
+            <div class="flex grow h-[2px] bg-brand"></div>
+            <div class="flex items-center justify-end gap-x-5 ml-4">
+              <a href="{% url 'products' %}" class="inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand">See All →</a>
+            </div>
+        </header>
+        <div class="w-full grid grid-cols-2 md:grid-cols-3 gap-8">
+            <!-- START CARD PRODUCT -->
+            <div class="flex flex-col grow items-start">
+                <div class="mb-4 w-full h-[212px] flex items-center justify-center bg-gray-100 rounded-md">
+                    <img 
+                        src="{% static 'images/5w-30-mockup-4_result.png' %}"
+                        width="134"
+                        height="180"
+                        alt="Musashi engine oil"
+                        loading="lazy"
+                    />
+                </div>
+                <h3 class="mb-4 text-2xl font-semibold text-gray-800">
+                    Engine Oils
+                </h3>
+                <p class="text-base leading-6 text-gray-600">
+                    Choose from a variety of viscosities including 5W-30, 10W-40, and 0W-20 to match your engine's requirements.
+                </p>
+            </div>
+            <!-- END CARD PRODUCT -->
+            <!-- START CARD PRODUCT -->
+            <div class="flex flex-col grow items-start">
+                <div class="mb-4 w-full h-[212px] flex items-center justify-center bg-gray-100 rounded-md">
+                    <img 
+                          src="{% static 'images/coolant-cropped 1.png' %}"
+                          width="180"
+                          height="180"
+                          alt="Musashi engine coolant"
+                        loading="lazy"
+                    />
+                </div>
+                <h3 class="mb-4 text-2xl font-semibold text-gray-800">
+                    Coolants
+                </h3>
+                <p class="text-base leading-6 text-gray-600">
+                    Maintain optimal engine temperature and prevent overheating with our premium coolant formulations.
+                </p>
+            </div>
+            <!-- END CARD PRODUCT -->
+            <!-- START CARD PRODUCT -->
+            <div class="flex flex-col grow items-start">
+                <div class="mb-4 w-full h-[212px] flex items-center justify-center bg-gray-100 rounded-md">
+                    <img 
+                        src="{% static 'images/atf-1l-mockup_4_result.png' %}"
+                        width="129"
+                        height="180"
+                        alt="Musashi engine coolant"
+                        loading="lazy"
+                    />
+                </div>
+                <h3 class="mb-4 text-2xl font-semibold text-gray-800">
+                    ATF Transmission Fluid
+                </h3>
+                <p class="text-base leading-6 text-gray-600">
+                    Ensure smooth gear shifts and optimal transmission performance with our advanced ATF transmission fluid.
+                </p>
+            </div>
+            <!-- END CARD PRODUCT -->
+        </div>
+    </section>
+    <!-- END HOME SECTION 2 -->
+    <!-- START HOME SECTION 3 -->
+    <section id="about" class="w-full max-w-7xl px-4 py-20 mx-auto">
+        <div class="w-full flex flex-col-reverse md:flex-row justify-between items-center">
+            <div class="max-w-[540px] flex flex-col">
+                <h2 class="mb-6 text-3xl font-semibold text-gray-800">
+                    Over <span class="text-brand">30 years</span> of experience
+                </h2>
+                <p class="text-base leading-6 text-gray-600">
+                    With a legacy built on decades experience, Musashi Lubricants stands as a beacon of reliability and performance.
+                    <br></br>
+                    Trust in our expertise to keep your engine running smoothly mile after mile.
+                </p>
+            </div>
+            <img 
+                src="{% static 'images/1650191954-5w-30-mockup-5_result-min-min.png' %}" 
+                alt="Musashi engine oil" 
+                width="455" 
+                height="300" 
+                loading="lazy" 
+                class="mb-12 -ml-16 md:mb-0" 
+            />
+        </div>
+    </section>
+    <!-- END HOME SECTION 3 -->
+    <!-- START HOME SECTION 4 -->
+    <section class="w-full max-w-7xl px-4 py-20 mx-auto">
+        <div class="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-x-16">
+            <img 
+                src="{% static 'images/japan.svg' %}" 
+                alt="Flag of Japan" 
+                width="270" 
+                height="180" 
+                loading="lazy" 
+                class="mb-12 md:mb-0 object-contain object-center shadow-xl" 
+            />
+            <div class="grow flex flex-col">
+                <h2 class="mb-6 text-3xl font-semibold text-gray-800">
+                    <span class="text-brand">Japan Quality</span> Assurance
+                </h2>
+                <p class="text-base leading-6 text-gray-600">
+                    Our commitment to excellence begins with sourcing the finest ingredients and adhering to stringent quality standards. Experience the reliability and precision of Japanese engineering in every drop of our lubricants.
+                </p>
+            </div>
+        </div>            
+    </section>
+    <!-- END HOME SECTION 4 -->
+    <!-- START HOME SECTION 5 -->
+    <section class="w-full max-w-7xl px-4 pt-20 pb-12 mx-auto">
+        <div class="w-full flex flex-col md:flex-row md:justify-between items-start gap-x-16 gap-y-12 md:gap-y-0">
+            <div class="grow flex flex-col">
+                <h2 class="mb-6 text-3xl font-semibold text-gray-800">
+                    Fully <span class="text-brand">Synthetic</span> Formulation
+                </h2>
+                <p class="text-base leading-6 text-gray-600">
+                    Engineered for maximum performance and durability, our fully synthetic motor oils offer superior protection against friction, heat, and wear.  Experience smoother acceleration, enhanced fuel efficiency, and  prolonged engine life with Musashi Lubricants.
+                </p>
+            </div>
+            <div class="grow flex flex-col">
+                <h2 class="mb-6 text-3xl font-semibold text-gray-800">
+                    Tailored for <span class="text-brand">Gasoline</span> and <span class="text-brand">Diesel </span>Engines
+                </h2>
+                <p class="text-base leading-6 text-gray-600">
+                    Whether you're behind the wheel of a diesel-powered workhorse or a  high-performance gasoline vehicle, Musashi Lubricants has the perfect formula to meet your engine's specific needs. Drive with confidence  knowing that your engine is fortified with the finest lubricants  available.
+                </p>
+            </div>
+        </div>
+    </section>
+    <!-- END HOME SECTION 5 -->
+    <!-- START GET IN TOUCH SECTION -->
+    <section
+        id="contact" 
+        class="w-full mt-12 max-w-dvw h-[528px]" 
+    style="background-image: url('{% static 'images/bg-architechtural.png' %}'); background-repeat: no-repeat; background-position: bottom;"
+    >
+        <div class="h-full pt-20 mx-auto flex flex-col items-center max-w-[540px]">
+            <h2 class="mb-4 text-3xl text-center font-semibold text-gray-800">
+                Get in touch
+            </h2>
+            <p class="text-center text-base leading-6 text-gray-600 mb-8">
+                For inquiries or more information, please contact us via the following email address.
+            </p>
+            <a 
+                href="mailto:musashilubes@gmail.com"
+                class="inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand"
+            >
+            <img src="{% static 'icons/mail.svg' %}" alt="Mail icon" width="24" height="24" class="object-contain object-center mr-2" />
+                musashilubes@gmail.com
+            </a>
+        </div>
+    </section>
+    <!-- END GET IN TOUCH SECTION -->
+</main>
+{% endblock content %}

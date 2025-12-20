@@ -1,0 +1,39 @@
+<form
+  x-data
+  hx-get="{% url 'products' %}"
+  hx-target="#products_list"
+  hx-trigger="change"
+  hx-swap="innerHTML"
+>
+  <div class="flex flex-col gap-y-2">
+  {% for category in categories %}
+    {% with cat_id_str=category.id|stringformat:"s" %}
+    <div>
+      <input 
+        type="checkbox"
+        name="category"
+        value="{{ category.id }}"
+        id="cat-{{ category.id }}"
+        {# Check if the current ID is in the list of selected IDs (passed by view) #}
+        {% if cat_id_str in selected_categories %}checked{% endif %}
+      >
+      <label for="cat-{{ category.id }}">{{ category.name }}</label>
+    </div>
+    {% endwith %}
+  {% endfor %}
+  </div>
+  {# Hidden input to ensure page 1 is always requested when filters change #}
+  <input type="hidden" name="page" value="1">
+
+
+  <div class="w-full flex mt-8 mb-4">
+    {# Clear filters button #}
+    <button 
+      type="button"
+      class="cursor-pointer text-sm py-1 px-2 bg-gray-200 hover:bg-gray-100 focus-visible:bg-gray-100 active:bg-gray-300 rounded inline-flex items-center justify-center transition-colors"
+      @click="$el.closest('form').reset(); htmx.trigger($el.closest('form'), 'change')"
+    >
+      Clear Filters
+    </button>
+  </div>
+</form>

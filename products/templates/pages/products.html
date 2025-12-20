@@ -1,0 +1,38 @@
+{% extends "layout/layout.html" %} 
+{% load static %} 
+{% block content %}
+<main class="w-full max-w-full md:max-w-7xl mx-auto min-h-[80dvh]">
+  <header class="flex w-full pt-16 pb-12 items-center justify-center px-4">
+    <h1 class="text-3xl md:text-4xl text-gray-900 text-center">Our Products</h1>
+  </header>
+  <div class="grid grid-cols-4 gap-8 mx-auto w-full px-4">
+    <aside class="col-span-1 flex flex-col items-start w-full py-5 border-t border-b border-gray-200">
+      <h2 class="text-base font-semibold mb-6">Categories</h2>
+      {% include '../partials/_filters.html' %}
+    </aside>
+    <section class="flex flex-col items-start justify-start col-span-3 w-full">
+      <ul id="products_list" class="list-none w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+          {% include "../partials/_products_list.html" %}
+      </ul>
+
+      <div id="load-more-container" hx-swap-oob="true" class="w-full">
+        {% if page_obj.has_next %}
+        <nav class="w-full flex justify-center items-center py-6 gap-2">
+          <button 
+            hx-get="?page={{ page_obj.next_page_number }}" 
+            hx-target="#products_list"
+            hx-swap="beforeend"
+            hx-indicator="#loading-spinner-{{ page_obj.next_page_number }}"
+            class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand"
+          >
+            See More
+          </button>
+          <div id="loading-spinner-{{ page_obj.next_page_number }}" class="htmx-indicator">{% include 'layout/_spinner_speedometer.html' %}</div>
+        </nav>
+        {% endif %}
+      </div>
+    </section>
+  </div>
+</main>
+
+{% endblock %}
