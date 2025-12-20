@@ -87,7 +87,7 @@
       <div class="flex gap-2 mt-2">
         <button 
           @click="filterByVolume(null)" 
-          class="px-3 py-1 text-sm border rounded-sm"
+          class="cursor-pointer px-3 py-1 text-sm border rounded-sm"
           :class="currentVolumeFilter === null ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'"
         >
           All
@@ -96,7 +96,7 @@
         {% for variant in product.variants.all %}
         <button 
           @click="filterByVolume('{{ variant.volume.name }}', {{ variant.volume.id }})" 
-          class="px-3 py-1 text-sm border rounded-sm transition"
+          class="cursor-pointer px-3 py-1 text-sm border rounded-sm transition"
           :class="currentVolumeFilter === '{{ variant.volume.name }}' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800 hover:bg-gray-50'"
         >
           {{ variant.volume.name }}
@@ -117,7 +117,21 @@
       </table>
     </div>
     {% endif %}
-    <!-- TODO data sheet download btn -->
+    <div class="py-5 w-full grid grid-cols-2 gap-4">
+      <a href="#" class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-100 py-3 px-6 rounded-full bg-gray-900 border border-gray-900 hover:bg-gray-800 focus-visible:bg-gray-800 active:bg-gray-950 transition-colors">
+        <span>
+        Place Order
+        </span>
+      </a>
+    {% if product.data_sheet %}
+      <a href="{% get_media_prefix %}{{ product.data_sheet }}" class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand">
+        <img src="{% static 'icons/download.svg' %}" alt="Download icon" width="20" height="20" class="mr-1.5">
+        <span>
+         Data Sheet
+        </span>
+      </a>
+    {% endif %}
+    </div>
   </section>
   <!-- END product details section -->
 

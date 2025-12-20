@@ -91,9 +91,9 @@ class Product(models.Model):
             return "Price N/A"
 
         if prices['min_price'] == prices['max_price']:
-            return f"${prices['min_price']}"
+            return f"${prices['min_price']:.2f}"
 
-        return f"${prices['min_price']} - ${prices['max_price']}"
+        return f"${prices['min_price']:.2f} - ${prices['max_price']:.2f}"
 
     def __str__(self):
         return self.name
