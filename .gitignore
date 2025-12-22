@@ -138,3 +138,6 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+# ignore local AI context docs
+.gemini_docs/
