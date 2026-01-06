@@ -1,0 +1,50 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+{% block title %}{{ description.heading }}{% endblock title %}
+{% block content %}
+<main class="w-full max-w-dvw">
+  <div
+    class="my-20 flex flex-col mx-auto w-full max-w-full md:max-w-xl px-4 min-h-[640px] md:min-h-[800px]"
+  >
+    {% if description %}
+    <header class="mx-auto flex flex-col gap-4 items-center mb-16">
+      <h2 class="text-3xl font-semibold">{{ description.heading }}</h2>
+      <div>{{ description.description|safe }}</div>
+    </header>
+    {% endif %}
+
+    <div>
+      <ul class="list-none flex flex-col gap-y-4 w-full">
+        {% for link in links %}
+        <li>
+          <a
+            href="{{ link.url }}"
+            class="w-full flex items-center justify-between py-3 px-5 bg-brand text-white text-center font-semibold rounded-md hover:brightness-125 focus-visible:brightness-125 transition"
+          >
+            {% if link.icon %}
+            <img
+              src="{% get_media_prefix %}{{ link.icon }}"
+              alt="icon"
+              width="32"
+              height="32"
+              class="object-contain object-center"
+            />
+            {% endif %}
+            <span class="block">{{ link.label }}</span>
+            <div class="block w-1">&nbsp;</div>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- <img -->
+    <!--   src="{% static 'images/logo-musashi.svg' %}" -->
+    <!--   width="236" -->
+    <!--   height="56" -->
+    <!--   alt="Logo" -->
+    <!--   class="max-w-[50dvw] md:max-w-[326px] object-contain object-center" -->
+    <!-- /> -->
+  </div>
+</main>
+{% endblock content %}

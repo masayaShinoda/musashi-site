@@ -2,15 +2,31 @@ import os
 import json
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.conf import settings
 from base.utils import compress_image
+from .models import LinkPageDescription, Link
 
 
+@require_http_methods(['GET'])
 def homepage(request):
     context = {"test": "hi"}
     return render(request, 'pages/homepage.html', context)
+
+
+@require_http_methods(['GET'])
+def links_page(request):
+    description = LinkPageDescription.objects.first()
+    links = Link.objects.all()
+
+    context = {
+        'description': description,
+        'links': links,
+    }
+
+    return render(request, 'pages/links_page.html', context)
 
 
 @csrf_exempt

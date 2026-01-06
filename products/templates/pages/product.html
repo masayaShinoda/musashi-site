@@ -1,7 +1,7 @@
 {% extends "layout/layout.html" %} 
 {% load static %} 
+{% block title %}{{ product.name }}{% endblock title %}
 {% block content %}
-
 <main 
   x-data="productGallery()"
   class="w-full max-w-full md:max-w-7xl mx-auto min-h-[80dvh] px-4 pt-16 pb-12"
