@@ -3,6 +3,8 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from .models import Product, Category
+from .forms import OrderForm
+from .utils import send_order_notifications
 
 
 @require_http_methods(['GET', 'POST'])
@@ -70,3 +72,33 @@ def product(request, product_slug):
     }
 
     return render(request, 'pages/product.html', context)
+
+
+def place_order_modal(request, product_slug):
+    product = get_object_or_404(Product, slug=product_slug)
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST, product=product)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.product = product
+            order.save()
+
+            # trigger notifications
+            send_order_notifications(order)
+
+            # return success partial
+            return render(request, 'partials/_order_success.html')
+        else:
+            # return errors (HTMX swap form)
+            return render(request, 'partials/_order_form.html', {
+                'form': form,
+                'product': product
+            })
+
+    # GET request:
+    form = OrderForm(product=product)
+    return render(request, 'partials/_order_form.html', {
+        'form': form,
+        'product': product
+    })

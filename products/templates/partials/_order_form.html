@@ -1,0 +1,78 @@
+<form 
+    hx-post="{% url 'place_order' product.slug %}" 
+    hx-target="#order-form-container" 
+    hx-swap="innerHTML"
+    id="order-form-container"
+    class="space-y-4"
+>
+    {% csrf_token %}
+    
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">First Name <span class="text-red-500">*</span></label>
+            {{ form.first_name }}
+            {{ form.first_name.errors }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Last Name <span class="text-red-500">*</span></label>
+            {{ form.last_name }}
+            {{ form.last_name.errors }}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Phone <span class="text-red-500">*</span></label>
+            {{ form.phone }}
+            {{ form.phone.errors }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Email (Optional)</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+        <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700">Variant</label>
+            <!-- Alpine Binding Here -->
+            <select 
+                name="{{ form.variant.name }}" 
+                x-model="selectedVariantId"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand focus:border-brand"
+            >
+                {% for x, y in form.fields.variant.choices %}
+                    <option value="{{ x }}">{{ y }}</option>
+                {% endfor %}
+            </select>
+            {{ form.variant.errors }}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Qty</label>
+            {{ form.quantity }}
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Remarks</label>
+        {{ form.remarks }}
+    </div>
+
+    <div class="flex justify-end pt-4 border-t border-gray-200">
+        <button 
+            type="button" 
+            @click="openOrderModal = false" 
+            class="mr-3 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+        >
+            Cancel
+        </button>
+        <button 
+            type="submit" 
+            class="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800"
+        >
+            Confirm Order
+        </button>
+    </div>
+</form>
+

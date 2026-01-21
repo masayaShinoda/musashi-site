@@ -114,11 +114,13 @@
       </div>
       {% endif %}
       <div class="py-5 w-full grid sm:grid-cols-2 gap-4">
-        <a href="#" class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-100 py-3 px-6 rounded-full bg-gray-900 border border-gray-900 hover:bg-gray-800 focus-visible:bg-gray-800 active:bg-gray-950 transition-colors">
-          <span>
-          Place Order
-          </span>
-        </a>
+        <button 
+            type="button"
+            @click="$dispatch('open-order-dialog', { variantId: currentVolumeId })"
+            class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-100 py-3 px-6 rounded-full bg-gray-900 border border-gray-900 hover:bg-gray-800 focus-visible:bg-gray-800 active:bg-gray-950 transition-colors"
+        >
+            <span>Place Order</span>
+        </button>
       {% if product.data_sheet %}
         <a href="{% get_media_prefix %}{{ product.data_sheet }}" class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand">
           <img src="{% static 'icons/download.svg' %}" alt="Download icon" width="20" height="20" class="mr-1.5">
@@ -299,5 +301,72 @@
   </section>
   <!-- END tabbed description section -->
 </main>
+
+
+<!-- Order Modal Component -->
+<div 
+    x-data="{ 
+        openOrderModal: false, 
+        selectedVariantId: null 
+    }"
+    @open-order-dialog.window="
+        openOrderModal = true; 
+        selectedVariantId = $event.detail.variantId ? $event.detail.variantId.toString() : '';
+    "
+    @keydown.escape.window="openOrderModal = false"
+    class="relative z-50"
+    aria-labelledby="modal-title" 
+    role="dialog" 
+    aria-modal="true"
+    x-show="openOrderModal" 
+    x-cloak
+>
+    <!-- Backdrop -->
+    <div 
+        x-show="openOrderModal"
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 bg-black/50 transition-opacity"
+        @click="openOrderModal = false"
+    ></div>
+
+    <!-- Modal Panel -->
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div 
+                x-show="openOrderModal"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-lg"
+            >
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" id="modal-title">
+                        Order Request: {{ product.name }}
+                    </h3>
+                    
+                    <!-- HTMX Container -->
+                    <!-- We load the form immediately when page loads so it is ready -->
+                    <div hx-get="{% url 'place_order' product.slug %}" hx-trigger="load">
+                        <!-- Loading State -->
+                        <div class="animate-pulse space-y-4">
+                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                            <div class="h-10 bg-gray-200 rounded"></div>
+                            <div class="h-10 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}
