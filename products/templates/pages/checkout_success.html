@@ -1,0 +1,22 @@
+{% extends "layout/layout.html" %}
+{% block title %}Order Success{% endblock %}
+
+{% block content %}
+<main class="w-full max-w-2xl mx-auto px-4 py-20 text-center min-h-[80dvh]">
+  <div class="rounded-full bg-green-100 p-4 inline-flex mb-6">
+    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+  </div>
+  
+  <h1 class="text-3xl font-bold text-gray-900 mb-4">Order Received!</h1>
+  <p class="text-gray-600 text-lg mb-8">
+    Thank you, {{ order.first_name }}. Your order <b>#{{ order.id }}</b> has been placed successfully.
+    <br>We will contact you shortly at <b>{{ order.phone }}</b> to confirm delivery details.
+  </p>
+
+  <a href="{% url 'products' %}" class="inline-block bg-brand text-white font-semibold py-3 px-8 rounded-md hover:bg-brand-dark transition">
+    Continue Shopping
+  </a>
+</main>
+{% endblock %}

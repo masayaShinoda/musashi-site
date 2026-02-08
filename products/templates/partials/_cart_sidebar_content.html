@@ -1,0 +1,108 @@
+<div id="cart-sidebar-body" class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+  {% if cart|length == 0 %}
+  <div
+    class="h-full flex flex-col items-center justify-center text-center space-y-4"
+  >
+    <p class="text-gray-500">Your cart is empty.</p>
+    <button
+      @click="cartOpen = false"
+      class="cursor-pointer text-brand font-medium hover:underline"
+    >
+      Continue Shopping
+    </button>
+  </div>
+  {% else %}
+  <ul role="list" class="-my-6 divide-y divide-gray-200">
+    {% for item in cart %}
+    <li class="flex py-6">
+      <div
+        class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
+      >
+        {% if item.variant.product.images.first %}
+        <img
+          src="{{ item.variant.product.images.first.image.url }}"
+          alt="{{ item.variant.product.name }}"
+          class="h-full w-full object-cover object-center"
+        />
+        {% else %}
+        <div
+          class="h-full w-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs"
+        >
+          No Img
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="ml-4 flex flex-1 flex-col">
+        <div>
+          <div class="flex justify-between text-base font-medium text-gray-900">
+            <h3>
+              <a href="{{ item.variant.product.get_absolute_url }}"
+                >{{ item.variant.product.name }}</a
+              >
+            </h3>
+            <p class="ml-4">${{ item.total_price }}</p>
+          </div>
+          <p class="mt-1 text-sm text-gray-500">
+            {{ item.variant.volume.name }}
+          </p>
+        </div>
+        <div class="flex flex-1 items-end justify-between text-sm">
+          <p class="text-gray-500">Qty {{ item.quantity }}</p>
+
+          <button
+            type="button"
+            hx-post="{% url 'cart_remove' item.variant.id %}"
+            hx-target="#cart-sidebar-body"
+            hx-swap="outerHTML"
+            class="cursor-pointer font-medium text-red-600 hover:text-red-500"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+<div id="cart-sidebar-footer" hx-swap-oob="true">
+  {% if cart|length > 0 %}
+  <div class="border-t border-gray-200 px-4 py-6 sm:px-6 bg-white">
+    <div class="flex justify-between text-base font-medium text-gray-900">
+      <p>Subtotal</p>
+      <p>${{ cart.get_total_price }}</p>
+    </div>
+    <p class="mt-0.5 text-sm text-gray-500">
+      Shipping and taxes calculated at checkout.
+    </p>
+    <div class="mt-6">
+      <a
+        href="{% url 'checkout' %}"
+        class="flex items-center justify-center rounded-md border border-transparent bg-brand px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-brand-dark"
+        >Checkout</a
+      >
+    </div>
+  </div>
+  {% else %}
+  <div
+    class="border-t border-gray-200 px-4 py-6 sm:px-6 bg-white opacity-50 pointer-events-none"
+  >
+    <div class="flex justify-between text-base font-medium text-gray-900">
+      <p>Subtotal</p>
+      <p>$0.00</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% if request.htmx %}
+<span
+  id="cart-badge"
+  hx-swap-oob="true"
+  class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800"
+>
+  {{ cart|length }}
+</span>
+{% endif %}

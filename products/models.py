@@ -189,15 +189,36 @@ class Order(models.Model):
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=20, help_text="Required for contact.")
     email = models.EmailField(max_length=255, null=True, blank=True)
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="orders")
-    variant = models.ForeignKey(ProductVariant, on_delete=models.SET_NULL,
-                                null=True, blank=True, help_text="Specific volume or variant ordered.")
-    quantity = models.PositiveIntegerField(default=1)
-
-    # additional info
     remarks = models.TextField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
+    is_resolved = models.BooleanField(default=False)
+
+    @property
+    def total_items(self):
+        return sum(item.quantity for item in self.items.all())
+
+    @property
+    def total_cost(self):
+        # Optional: Helper if you want to calculate total price
+        return sum(item.total_price for item in self.items.all())
 
     def __str__(self):
-        return f"Order: {self.first_name} {self.last_name} - {self.product.name}"
+        return f"Order #{self.id}: {self.first_name} {self.last_name}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    variant = models.ForeignKey('ProductVariant', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    @property
+    def total_price(self):
+        # FIX: Ensure price exists before multiplying
+        if self.variant.price is not None:
+            return self.variant.price * self.quantity
+        return 0
+
+    def __str__(self):
+        return f"{self.quantity}× {self.product.name} {self.variant.volume.name}"
