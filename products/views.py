@@ -106,6 +106,27 @@ def cart_remove(request, variant_id):
     return render_cart_updates(request, cart)
 
 
+@require_http_methods(['POST'])
+def cart_update(request, variant_id):
+    cart = Cart(request)
+    variant = get_object_or_404(ProductVariant, id=variant_id)
+
+    try:
+        quantity = int(request.POST.get('quantity'))
+        if quantity > 0:
+            # override_quantity=True replaces the number instead of adding to it
+            cart.add(variant_id=variant.id, quantity=quantity,
+                     override_quantity=True)
+        else:
+            # If user types 0, remove the item
+            cart.remove(variant_id)
+    except ValueError:
+        pass
+
+    # Reuse existing helper to render the sidebar content
+    return render_cart_updates(request, cart)
+
+
 @require_http_methods(["GET", "POST"])
 def checkout(request):
     cart = Cart(request)

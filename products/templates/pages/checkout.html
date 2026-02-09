@@ -62,7 +62,7 @@
       </form>
     </section>
 
-    <section class="bg-gray-50 p-6 rounded-lg border border-gray-200 h-fit">
+    <section class="bg-gray-50 p-6 rounded-lg border border-gray-200 h-fit order-1 sm:order-2">
       <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
       
       <div class="flow-root">
@@ -73,7 +73,7 @@
               {% if item.variant.product.images.first %}
                 <img src="{{ item.variant.product.images.first.image.url }}" class="h-full w-full object-cover object-center">
               {% else %}
-                <div class="h-full w-full flex items-center justify-center text-xs text-gray-400">No Img</div>
+                <div class="h-full w-full flex items-center justify-center text-xs text-gray-400">No Image Available</div>
               {% endif %}
             </div>
 
@@ -81,13 +81,33 @@
               <div>
                 <div class="flex justify-between text-base font-medium text-gray-900">
                   <h3>{{ item.variant.product.name }}</h3>
-                  <p class="ml-4">${{ item.total_price }}</p>
+                  {% if item.total_price > 0 %}
+                    <p class="ml-4">${{ item.total_price }}</p>
+                  {% else %}
+                    <p class="ml-4">N/A</p>
+                  {% endif %}
                 </div>
                 <p class="mt-1 text-sm text-gray-500">{{ item.variant.volume.name }}</p>
               </div>
               <div class="flex flex-1 items-end justify-between text-sm">
-                <p class="text-gray-500">Qty {{ item.quantity }}</p>
-              </div>
+                
+                <div class="flex items-center mt-2">
+                    <label for="checkout-qty-{{ item.variant.id }}" class="sr-only">Quantity</label>
+                    <span class="text-gray-500 mr-2">Qty</span>
+                    <input
+                      id="checkout-qty-{{ item.variant.id }}"
+                      type="number"
+                      name="quantity"
+                      value="{{ item.quantity }}"
+                      min="1"
+                      class="w-16 border border-gray-300 rounded px-2 py-1 text-center text-sm focus:outline-none focus:ring-brand focus:border-brand"
+                      hx-post="{% url 'cart_update' item.variant.id %}"
+                      hx-trigger="change delay:500ms"
+                      hx-swap="none"
+                      hx-on::after-request="window.location.reload()"
+                    />
+                </div>
+                </div>
             </div>
           </li>
           {% endfor %}
@@ -97,9 +117,15 @@
       <div class="border-t border-gray-200 mt-6 pt-6">
         <div class="flex justify-between text-base font-medium text-gray-900">
           <p>Subtotal</p>
-          <p>${{ cart.get_total_price }}</p>
+          {% if cart.get_total_price > 0 %}
+            <p class="ml-4">${{ cart.get_total_price }}</p>
+          {% else %}
+            <p class="ml-4">N/A</p>
+          {% endif %}
         </div>
-        <p class="mt-0.5 text-sm text-gray-500">Shipping is calculated manually after order.</p>
+        <p class="mt-0.5 text-sm text-gray-500">
+          Prices are before taxes and/or possible additional fees.
+        </p>
       </div>
     </section>
 

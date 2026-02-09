@@ -1,8 +1,6 @@
 <div id="cart-sidebar-body" class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
   {% if cart|length == 0 %}
-  <div
-    class="h-full flex flex-col items-center justify-center text-center space-y-4"
-  >
+  <div class="h-full flex flex-col items-center justify-center text-center space-y-4">
     <p class="text-gray-500">Your cart is empty.</p>
     <button
       @click="cartOpen = false"
@@ -15,9 +13,7 @@
   <ul role="list" class="-my-6 divide-y divide-gray-200">
     {% for item in cart %}
     <li class="flex py-6">
-      <div
-        class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200"
-      >
+      <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
         {% if item.variant.product.images.first %}
         <img
           src="{{ item.variant.product.images.first.image.url }}"
@@ -25,10 +21,8 @@
           class="h-full w-full object-cover object-center"
         />
         {% else %}
-        <div
-          class="h-full w-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs"
-        >
-          No Img
+        <div class="h-full w-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+          No Image Available
         </div>
         {% endif %}
       </div>
@@ -37,19 +31,35 @@
         <div>
           <div class="flex justify-between text-base font-medium text-gray-900">
             <h3>
-              <a href="{{ item.variant.product.get_absolute_url }}"
-                >{{ item.variant.product.name }}</a
-              >
+              <a href="{{ item.variant.product.get_absolute_url }}">{{ item.variant.product.name }}</a>
             </h3>
-            <p class="ml-4">${{ item.total_price }}</p>
+            <p class="ml-4">
+              {% if item.total_price > 0 %}
+                ${{ item.total_price }}
+              {% endif %}
+            </p>
           </div>
           <p class="mt-1 text-sm text-gray-500">
             {{ item.variant.volume.name }}
           </p>
         </div>
         <div class="flex flex-1 items-end justify-between text-sm">
-          <p class="text-gray-500">Qty {{ item.quantity }}</p>
-
+          <div class="flex items-center">
+            <label for="quantity-{{ item.variant.id }}" class="sr-only">Quantity</label>
+            <span class="text-gray-500 mr-2">Qty</span>
+            <input
+              id="quantity-{{ item.variant.id }}"
+              type="number"
+              name="quantity"
+              value="{{ item.quantity }}"
+              min="1"
+              class="w-16 border border-gray-300 rounded px-2 py-1 text-center text-sm focus:outline-none focus:ring-brand focus:border-brand"
+              hx-post="{% url 'cart_update' item.variant.id %}"
+              hx-trigger="change delay:500ms"
+              hx-target="#cart-sidebar-body"
+              hx-swap="outerHTML"
+            />
+          </div>
           <button
             type="button"
             hx-post="{% url 'cart_remove' item.variant.id %}"
@@ -72,10 +82,12 @@
   <div class="border-t border-gray-200 px-4 py-6 sm:px-6 bg-white">
     <div class="flex justify-between text-base font-medium text-gray-900">
       <p>Subtotal</p>
-      <p>${{ cart.get_total_price }}</p>
+      {% if cart.get_total_price > 0 %}
+        <p>${{ cart.get_total_price }}</p>
+      {% endif %}
     </div>
     <p class="mt-0.5 text-sm text-gray-500">
-      Shipping and taxes calculated at checkout.
+      Prices are before taxes and/or possible additional fees.
     </p>
     <div class="mt-6">
       <a
@@ -85,23 +97,22 @@
       >
     </div>
   </div>
-  {% else %}
-  <div
-    class="border-t border-gray-200 px-4 py-6 sm:px-6 bg-white opacity-50 pointer-events-none"
-  >
-    <div class="flex justify-between text-base font-medium text-gray-900">
-      <p>Subtotal</p>
-      <p>$0.00</p>
-    </div>
-  </div>
   {% endif %}
 </div>
 
 {% if request.htmx %}
 <span
-  id="cart-badge"
+  id="cart-badge-mobile"
   hx-swap-oob="true"
-  class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800"
+  class="absolute inline-flex items-center justify-center p-0.5 rounded-full h-5 w-5 bg-brand right-1 bottom-1 text-sm font-medium text-gray-50 {% if cart|length == 0 %}hidden{% endif %}"
+>
+  {{ cart|length }}
+</span>
+
+<span
+  id="cart-badge-desktop"
+  hx-swap-oob="true"
+  class="absolute inline-flex items-center justify-center p-0.5 rounded-full h-5 w-5 bg-brand right-0 bottom-0 text-sm font-medium text-gray-50 {% if cart|length == 0 %}hidden{% endif %}"
 >
   {{ cart|length }}
 </span>
