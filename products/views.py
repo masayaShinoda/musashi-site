@@ -173,8 +173,11 @@ def checkout(request):
             order = form.save()
 
             # 3. Save Order Items & Build Telegram Message
-            msg_lines = [f"<b>New Order #{
-                order.id}</b>", f"Name: {order.first_name} {order.last_name}", f"Phone: {order.phone}", ""]
+            msg_lines = [
+                f"<b>New Order #{order.id}</b>",
+                f"Name: {order.first_name} {order.last_name}",
+                f"Phone: {order.phone}",
+            ]
 
             for item in cart:
                 OrderItem.objects.create(
