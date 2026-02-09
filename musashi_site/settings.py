@@ -72,6 +72,8 @@ TEMPLATES = [
 
                 # my context context processors
                 'django.template.context_processors.media',
+                'products.context_processors.cart',
+                'base.context_processors.turnstile',
             ],
         },
     },
@@ -175,3 +177,15 @@ UNFOLD = {
         "show_search": True,
     }
 }
+
+
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
+
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+
+CART_SESSION_ID = 'cart'
+
+TURNSTILE_SITE_KEY = os.environ.get('TURNSTILE_SITE_KEY')
+TURNSTILE_SECRET_KEY = os.environ.get('TURNSTILE_SECRET_KEY')

@@ -1,0 +1,134 @@
+{% extends "layout/layout.html" %}
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<main class="w-full max-w-7xl mx-auto px-4 py-16 mb-10 md:mb-16 min-h-[80dvh]">
+  <h1 class="text-3xl font-bold mb-8 text-gray-900">Checkout</h1>
+
+  <div class="grid md:grid-cols-2 gap-12">
+    
+    <section class="order-2 sm:order-1">
+      <h2 class="text-xl font-semibold mb-4">Contact Information</h2>
+      <form method="POST" action="." class="space-y-4">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+            {{ form.first_name }}
+            {{ form.first_name.errors }}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+            {{ form.last_name }}
+            {{ form.last_name.errors }}
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email (Optional)</label>
+          {{ form.email }}
+          {{ form.email.errors }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          {{ form.phone }}
+          {{ form.phone.errors }}
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Order Remarks</label>
+          {{ form.remarks }}
+        </div>
+
+        <div class="my-4">
+          <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+          <div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITE_KEY }}"></div>
+        </div>
+
+        {% if turnstile_error %}
+        <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+          {{ turnstile_error }}
+        </div>
+        {% endif %}
+
+        <button 
+          type="submit" 
+          class="cursor-pointer w-full mt-6 bg-brand text-white font-bold py-3 px-6 rounded-md hover:bg-brand-dark transition-colors shadow-sm"
+        >
+          Place Order
+        </button>
+      </form>
+    </section>
+
+    <section class="bg-gray-50 p-6 rounded-lg border border-gray-200 h-fit order-1 sm:order-2">
+      <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+      
+      <div class="flow-root">
+        <ul role="list" class="-my-4 divide-y divide-gray-200">
+          {% for item in cart %}
+          <li class="flex py-4">
+            <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white">
+              {% if item.variant.product.images.first %}
+                <img src="{{ item.variant.product.images.first.image.url }}" class="h-full w-full object-cover object-center">
+              {% else %}
+                <div class="h-full w-full flex items-center justify-center text-xs text-gray-400">No Image Available</div>
+              {% endif %}
+            </div>
+
+            <div class="ml-4 flex flex-1 flex-col">
+              <div>
+                <div class="flex justify-between text-base font-medium text-gray-900">
+                  <h3>{{ item.variant.product.name }}</h3>
+                  {% if item.total_price > 0 %}
+                    <p class="ml-4">${{ item.total_price }}</p>
+                  {% else %}
+                    <p class="ml-4">N/A</p>
+                  {% endif %}
+                </div>
+                <p class="mt-1 text-sm text-gray-500">{{ item.variant.volume.name }}</p>
+              </div>
+              <div class="flex flex-1 items-end justify-between text-sm">
+                
+                <div class="flex items-center mt-2">
+                    <label for="checkout-qty-{{ item.variant.id }}" class="sr-only">Quantity</label>
+                    <span class="text-gray-500 mr-2">Qty</span>
+                    <input
+                      id="checkout-qty-{{ item.variant.id }}"
+                      type="number"
+                      name="quantity"
+                      value="{{ item.quantity }}"
+                      min="1"
+                      class="w-16 border border-gray-300 rounded px-2 py-1 text-center text-sm focus:outline-none focus:ring-brand focus:border-brand"
+                      hx-post="{% url 'cart_update' item.variant.id %}"
+                      hx-trigger="change delay:500ms"
+                      hx-swap="none"
+                      hx-on::after-request="window.location.reload()"
+                    />
+                </div>
+                </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="border-t border-gray-200 mt-6 pt-6">
+        <div class="flex justify-between text-base font-medium text-gray-900">
+          <p>Subtotal</p>
+          {% if cart.get_total_price > 0 %}
+            <p class="ml-4">${{ cart.get_total_price }}</p>
+          {% else %}
+            <p class="ml-4">N/A</p>
+          {% endif %}
+        </div>
+        <p class="mt-0.5 text-sm text-gray-500">
+          Prices are before taxes and/or possible additional fees.
+        </p>
+      </div>
+    </section>
+
+  </div>
+</main>
+{% endblock %}

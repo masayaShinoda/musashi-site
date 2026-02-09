@@ -1,18 +1,16 @@
 {% extends "layout/layout.html" %} 
-{% load static %} 
+{% load static %}
 {% block title %}{{ product.name }}{% endblock title %}
+
 {% block content %}
 <main 
-  x-data="productGallery()"
+  x-data="productPage()"
   class="w-full max-w-full md:max-w-7xl mx-auto min-h-[80dvh] px-4 pt-16 pb-12"
 >
-  <!-- START product gallery AND product details section -->
   <section class="w-full max-w-full grid sm:grid-cols-2 gap-10 mb-16">
-    <!-- START product gallery section -->
+    
     <section class="">
-      <div  
-        class="flex flex-col gap-4 w-full max-w-2xl"
-      >
+      <div class="flex flex-col gap-4 w-full max-w-2xl">
         <div class="relative w-full aspect-square bg-gray-100 border border-gray-200 rounded-sm overflow-hidden group">
           
           <img 
@@ -51,35 +49,33 @@
                 class="cursor-pointer w-20 h-20 border-2 rounded-sm overflow-hidden transition-all duration-200"
                 :class="activeImage.id === img.id ? 'border-brand ring-1 ring-brand' : 'border-transparent opacity-70 hover:opacity-100'"
               >
-                <img 
-                  :src="img.url" 
-                  :alt="img.alt" 
-                  class="w-full h-full object-cover"
-                >
+                <img :src="img.url" :alt="img.alt" class="w-full h-full object-cover">
               </button>
             </template>
           </div>
         </div>
       </div>
     </section>
-    <!-- END product gallery section -->
 
-    <!-- START product details section -->
     <section class="sm:pl-1 lg:pl-10 xl:pl-20">
       <header class="w-full flex flex-col gap-4 justify-start items-start">
         <h1 class="text-2xl sm:text-3xl xl:text-4xl font-semibold">{{ product.name }}</h1>
+        
+        <p class="text-xl sm:text-2xl font-bold text-gray-900" x-text="currentPriceDisplay"></p>
+
         {% if product.categories %}
           <div>
             {% for category in product.categories.all %}
-            <p class="font-semisemibold text-gray-600">
+            <p class="font-semibold text-gray-600">
               {{ category.name }}&nbsp;
             </p>
             {% endfor %}
           </div>
         {% endif %}
       </header>
+
       <div class="mt-4 border-t pt-4 border-t-gray-300">
-        <label class="text-sm font-semisemibold text-gray-900">Select Volume:</label>
+        <label class="text-sm font-semibold text-gray-900">Select Volume:</label>
         <div class="flex gap-2 mt-2">
           <button 
             @click="filterByVolume(null)" 
@@ -100,9 +96,39 @@
           {% endfor %}
         </div>
       </div>
+
+      <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+        <form @submit.prevent="addToCart">
+          <div class="flex items-end gap-4">
+            <div class="w-24">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Quantity</label>
+              <input 
+                type="number" 
+                x-model="quantity" 
+                min="1" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brand focus:border-brand"
+              >
+            </div>
+            
+            <button 
+              type="submit"
+              :disabled="!currentVolumeId"
+              class="cursor-pointer flex-1 py-2 px-6 rounded-md shadow-sm text-white font-semibold transition-all duration-200"
+              :class="!currentVolumeId ? 'bg-gray-400 cursor-not-allowed' : 'bg-brand hover:bg-brand-dark'"
+            >
+              <span x-text="currentVolumeId ? 'Add to Cart' : 'Select Volume'"></span>
+            </button>
+          </div>
+          <p x-show="!currentVolumeId" class="text-red-500 text-xs mt-2">
+            * Please select a volume option above to add to cart.
+          </p>
+          <div id="cart-message" class="mt-2 text-sm text-green-600 font-medium"></div>
+        </form>
+      </div>
+
       {% if product.detail_items.all %}
       <div class="py-10 w-full">
-        <h3 class="text-gray-800 font-semisemibold text-base sm:text-lg md:text-xl mb-2">Details</h3>
+        <h3 class="text-gray-800 font-semibold text-base sm:text-lg md:text-xl mb-2">Details</h3>
         <table class="w-full text-sm sm:text-base">
         {% for item in product.detail_items.all  %}
           <tr> 
@@ -113,27 +139,21 @@
         </table>
       </div>
       {% endif %}
+
       <div class="py-5 w-full grid sm:grid-cols-2 gap-4">
-        <a href="#" class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-100 py-3 px-6 rounded-full bg-gray-900 border border-gray-900 hover:bg-gray-800 focus-visible:bg-gray-800 active:bg-gray-950 transition-colors">
-          <span>
-          Place Order
-          </span>
-        </a>
-      {% if product.data_sheet %}
-        <a href="{% get_media_prefix %}{{ product.data_sheet }}" class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand">
-          <img src="{% static 'icons/download.svg' %}" alt="Download icon" width="20" height="20" class="mr-1.5">
-          <span>Data Sheet</span>
-        </a>
-      {% endif %}
+        {% if product.data_sheet %}
+          <a href="{% get_media_prefix %}{{ product.data_sheet }}" class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand">
+            <img src="{% static 'icons/download.svg' %}" alt="Download icon" width="20" height="20" class="mr-1.5">
+            <span>Data Sheet</span>
+          </a>
+        {% endif %}
       </div>
     </section>
-    <!-- END product details section -->
-
 
     <script>
-      function productGallery() {
+      function productPage() {
         return {
-          // Initial data injected from Django
+          // Data
           allImages: [
             {% for image in product.images.all %}
             {
@@ -145,49 +165,49 @@
             },
             {% endfor %}
           ],
-          
-          activeImage: { url: '', alt: '' },
-          currentVolumeFilter: null, // null means 'Show All'
-          currentVolumeId: null,
           variants: [
             {% for variant in product.variants.all %}
             {
               id: {{ variant.volume.id }},
+              variant_pk: {{ variant.id }},
               name: "{{ variant.volume.name }}",
-              price: "{{ variant.price }}" 
+              price: "{% if variant.price %}{{ variant.price }}{% else %}N/A{% endif %}" 
             },
             {% endfor %}
           ],
+          
+          // State
+          activeImage: { url: '', alt: '' },
+          currentVolumeFilter: null,
+          currentVolumeId: null,
+          quantity: 1,
           zoom: false,
-
           priceString: "{{ product.get_price_display }}",
 
+          // Computed
           get currentPriceDisplay() {
-            // If a specific volume is selected, show that specific price
             if (this.currentVolumeId) {
               const variant = this.variants.find(v => v.id === this.currentVolumeId);
-              return variant ? `$${variant.price}` : 'Price N/A';
+              return variant && variant.price !== 'N/A' ? `$${variant.price}` : 'Price N/A';
             }
-            
-            // Otherwise, return the Range string we calculated in Python
             return this.priceString;
           },
 
+          get filteredImages() {
+            if (!this.currentVolumeId) return this.allImages;
+            return this.allImages.filter(img => 
+              img.volume_id === null || img.volume_id === this.currentVolumeId
+            );
+          },
+
+          // Init
           init() {
             if (this.allImages.length > 0) {
               this.activeImage = this.allImages[0];
             }
           },
 
-          get filteredImages() {
-            if (!this.currentVolumeId) {
-              return this.allImages;
-            }
-            return this.allImages.filter(img => 
-              img.volume_id === null || img.volume_id === this.currentVolumeId
-            );
-          },
-
+          // Methods
           setActive(img) {
             this.activeImage = img;
           },
@@ -195,109 +215,50 @@
           filterByVolume(name, id = null) {
             this.currentVolumeFilter = name;
             this.currentVolumeId = id;
-
-            // Auto-switch main image if specific volume selected
             if (id) {
               const firstVolImage = this.allImages.find(img => img.volume_id === id);
-              if (firstVolImage) {
-                this.activeImage = firstVolImage;
-              }
+              if (firstVolImage) this.activeImage = firstVolImage;
             }
+          },
+
+          addToCart() {
+            if (!this.currentVolumeId) return;
+
+            const variant = this.variants.find(v => v.id === this.currentVolumeId);
+            if (!variant) return;
+
+            // HTMX Request to Add Item
+            htmx.ajax('POST', `/products/cart/add/${variant.variant_pk}/`, {
+              // Target the Sidebar List (defined in partials/cart_sidebar_content.html)
+              target: '#cart-sidebar-body', 
+              swap: 'outerHTML', 
+              values: {
+                quantity: this.quantity,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+              }
+            }).then(() => {
+              // Logic to open the Global Sidebar
+              // We access the global x-data="{ cartOpen: false }" on the body tag
+              try {
+                // If using standard Alpine x-data structure on body:
+                document.querySelector('body')._x_dataStack[0].cartOpen = true;
+              } catch (e) {
+                console.error("Could not open cart sidebar automatically.", e);
+              }
+
+              // Visual feedback on the button
+              const msg = document.getElementById('cart-message');
+              if(msg) {
+                  msg.innerText = "Item added!";
+                  setTimeout(() => msg.innerText = "", 3000);
+              }
+            });
           }
         }
       }
     </script>
   </section>
-  <!-- END product gallery AND product details section -->
-  <!-- START tabbed description section -->
-  <section class="w-full max-w-full flex flex-col min-h-[40dvh]">
-    {% if product.description or product.instructions or product.standards_and_approval %}
-    <div x-data="{ activeTab: '{% if product.description %}description{% elif product.instructions %}instructions{% else %}standards{% endif %}' }" class="p-2 sm:p-4 border border-gray-200 rounded-lg">
-      <!-- Tab Navigation -->
-      <div class="flex space-x-0 sm:space-x-4 border-b border-gray-300 mb-4 overflow-x-scroll sm:overflow-x-visible max-w-full">
-        {% if product.description %}
-        <button 
-          @click="activeTab = 'description'" 
-          :class="activeTab === 'description' ? 'border-b-2 border-brand font-semibold' : 'text-gray-500'"
-          class="cursor-pointer text-sm py-1 px-2 sm:text-base sm:py-2 sm:px-4"
-        >
-          Description
-        </button>
-        {% endif %}
-
-        {% if product.instructions %}
-        <button 
-          @click="activeTab = 'instructions'" 
-          :class="activeTab === 'instructions' ? 'border-b-2 border-brand font-semibold' : 'text-gray-500'"
-          class="cursor-pointer text-sm py-1 px-2 sm:text-base sm:py-2 sm:px-4"
-        >
-          Instruction Manual
-        </button>
-        {% endif %}
-
-        {% if product.standards_and_approval %}
-        <button 
-          @click="activeTab = 'standards'" 
-          :class="activeTab === 'standards' ? 'border-b-2 border-brand font-semibold' : 'text-gray-500'"
-          class="cursor-pointer text-sm py-1 px-2 sm:text-base sm:py-2 sm:px-4"
-        >
-          Standards & Approvals
-        </button>
-        {% endif %}
-      </div>
-
-      <!-- Tab Content -->
-      <div class="text-sm lg:text-base text-gray-700 leading-normal py-4 sm:px-6">
-        {% if product.description %}
-        <div x-show="activeTab === 'description'" x-transition>
-          <div>{{ product.description|safe }}</div>
-        </div>
-        {% endif %}
-
-        {% if product.instructions %}
-        <div x-show="activeTab === 'instructions'" x-transition>
-          {% if product.instructions.pdf_manual %}
-            <section class="mb-6">
-              <a href="{% get_media_prefix %}{{ product.instructions.pdf_manual }}" class="cursor-pointer inline-flex items-center justify-center text-base leading-6 text-gray-800 py-3 px-6 rounded-full border border-brand">
-                <img src="{% static 'icons/download.svg' %}" alt="Download icon" width="20" height="20" class="mr-1.5">
-                <span>Instruction Manual (PDF)</span>
-              </a>
-            </section>
-          {% endif %}
-          {% if product.instructions.instruction_steps %}
-            <div>{{ product.instructions.instruction_steps|safe }}</div>
-          {% endif %}
-        </div>
-        {% endif %}
-
-        {% if product.standards_and_approval %}
-        <div x-show="activeTab === 'standards'" x-transition>
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div>{{ product.standards_and_approval|safe }}</div>
-            {% if product.suitable_vehicles %}
-              <div>
-                <h3 class="font-semibold mb-3">Suitable vehicles:</h3>
-                <ul class="list-none flex flex-col gap-3">
-                  {% for vehicle in product.suitable_vehicles.all %}
-                  <li class="flex items-center gap-3">
-                    {% if vehicle.image %}
-                    <img src="{% get_media_prefix %}{{ vehicle.image }}" alt="product is suitable for {{ vehicle.make }}{{ vehicle.model }}" width="100" height="100" loading="lazy" class="object-contain object-center">
-                    {% endif %}
-                    <p class="text-gray-800">{{ vehicle.make }} {{ vehicle.model }}</p>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            {% endif %}
-          </div>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-    {% endif %}
-
-  </section>
-  <!-- END tabbed description section -->
+  
+  {% include "partials/_product_tabs.html" %} 
 </main>
-
 {% endblock %}
